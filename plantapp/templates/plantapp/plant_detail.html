@@ -1,0 +1,170 @@
+{% extends 'plantapp/base.html' %}
+{% load static %}
+
+{% block title %}{{ plant.name }}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1>{{ plant.name }}</h1>
+        <p class="lead text-muted">{{ plant.scientific_name }}</p>
+    </div>
+    <div class="col-md-4 text-md-end">
+        {% if user.is_authenticated %}
+            <a href="{% url 'add_user_plant' plant.pk %}" class="btn btn-success">Add to My Plants</a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-5 mb-4">
+        <div class="card">
+            {% if plant.image %}
+                <img src="{{ plant.image.url }}" class="card-img-top" alt="{{ plant.name }}">
+            {% else %}
+                <img src="{% static 'images/placeholder.jpeg' %}" class="card-img-top" alt="{{ plant.name }}">
+            {% endif %}
+
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <span class="badge bg-{% if plant.difficulty == 'easy' %}success{% elif plant.difficulty == 'medium' %}warning{% else %}danger{% endif %}">
+                        {{ plant.get_difficulty_display }} Care
+                    </span>
+                    <span class="badge bg-secondary">
+                        {{ plant.get_plant_type_display }}
+                    </span>
+                </div>
+                
+                <div class="plant-meta mb-3">
+                    <span class="badge bg-light text-dark me-1"><i class="bi bi-sun"></i> {{ plant.sunlight_type|title }}</span>
+                    <span class="badge bg-light text-dark me-1"><i class="bi bi-droplet"></i> {{ plant.get_watering_level_display }}</span>
+                    {% if plant.toxic_to_pets %}
+                        <span class="badge bg-danger"><i class="bi bi-exclamation-triangle"></i> Toxic to pets</span>
+                    {% else %}
+                        <span class="badge bg-success"><i class="bi bi-check-circle"></i> Pet safe</span>
+                    {% endif %}
+                </div>
+                
+                <div class="plant-stats">
+                    <p><strong>Growth Rate:</strong> {{ plant.growth_rate }}</p>
+                    <p><strong>Max Height:</strong> {{ plant.max_height }}</p>
+                    <p><strong>Foliage Color:</strong> {{ plant.foliage_color }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-7">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Description</h5>
+                <p>{{ plant.description }}</p>
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Watering Requirements</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Watering Level:</strong> {{ plant.get_watering_level_display }}</p>
+                        <p><strong>Frequency:</strong> {{ plant.watering_frequency }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="watering-tips">
+                            {% if plant.watering_level == 'low' %}
+                                <p>This plant prefers dry conditions. Allow soil to dry completely between waterings.</p>
+                            {% elif plant.watering_level == 'moderate' %}
+                                <p>Water when the top inch of soil feels dry. Don't let the plant sit in water.</p>
+                            {% else %}
+                                <p>This plant likes consistently moist soil. Water frequently but ensure good drainage.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Care Instructions</h5>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <strong>Sunlight:</strong> {{ plant.sunlight_hours }} hours of {{ plant.sunlight_type }} sunlight
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Soil Type:</strong> {{ plant.soil_type }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Soil pH:</strong> {{ plant.ph_min }} to {{ plant.ph_max }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Humidity:</strong> At least {{ plant.humidity_min }}%
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Fertilizing:</strong> {{ plant.fertilizing_frequency }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Pruning:</strong> {{ plant.pruning_frequency }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Special Care</h5>
+                {% if plant.special_care_instructions %}
+                    <p>{{ plant.special_care_instructions }}</p>
+                {% else %}
+                    <p>No special care instructions for this plant.</p>
+                {% endif %}
+                
+                <div class="toxicity-info mt-4">
+                    <h6>Toxicity Information</h6>
+                    <ul>
+                        <li>Toxic to pets: {% if plant.toxic_to_pets %}Yes{% else %}No{% endif %}</li>
+                        <li>Toxic to humans: {% if plant.toxic_to_humans %}Yes{% else %}No{% endif %}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if related_items %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Recommended Products</h5>
+                <div class="row">
+                    {% for item in related_items %}
+                    <div class="col-md-3 col-6 mb-3">
+                        <div class="card h-100">
+                            {% if item.image %}
+                            <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.name }}">
+                            {% endif %}
+                            <div class="card-body">
+                                <h6 class="card-title">{{ item.name }}</h6>
+                                <p class="card-text text-success">${{ item.price }}</p>
+                            </div>
+                            <div class="card-footer bg-white">
+                                <a href="{{ item.affiliate_link }}" target="_blank" class="btn btn-sm btn-success w-100">Buy Now</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

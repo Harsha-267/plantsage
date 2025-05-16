@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; }
+        .task { margin-bottom: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px; }
+        .plant-name { font-weight: bold; color: #28a745; }
+        .task-type { font-weight: bold; }
+        .btn { display: inline-block; padding: 8px 16px; background: #28a745; color: white; text-decoration: none; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h2>Hello {{ user.username }},</h2>
+    <p>You have {{ tasks|length }} plant care tasks due:</p>
+    
+    {% for task in tasks %}
+    <div class="task">
+        <div class="plant-name">{{ task.user_plant.plant.name }}</div>
+        <div class="task-type">{{ task.get_task_type_display }}</div>
+        <div class="due-date">Due: {{ task.due_date }}</div>
+        <p>{{ task.notes|default:"No additional notes" }}</p>
+        <a href="{{ site_url }}{% url 'plant_care' task.user_plant.id %}" class="btn">View Plant</a>
+    </div>
+    {% endfor %}
+    
+    <p>View all your tasks in your <a href="{{ site_url }}{% url 'care_calendar' %}">Care Calendar</a>.</p>
+    
+    <p>Happy planting!<br>The PlantSage Team</p>
+</body>
+</html>
