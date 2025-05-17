@@ -82,8 +82,16 @@ WSGI_APPLICATION = 'plantsage.wsgi.application'
 import dj_database_url
 
 DATABASES = {
-    'default': dj_database_url.config(default='mysql://plantsage_user:Khv@0151@localhost:3306/plantsage_db', conn_max_age=600, ssl_require=False)
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'plantsage_db',
+        'USER': 'plantsage_user',
+        'PASSWORD': 'Khv@0151',
+        'HOST': 'localhost',
+        'PORT': '3306',
+    }
 }
+
 
 
 
