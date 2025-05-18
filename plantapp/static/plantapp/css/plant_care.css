@@ -1,0 +1,29 @@
+/* plant_care.css */
+.progress {
+    height: 25px;
+}
+
+.progress-bar {
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.list-group-item-warning {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { background-color: #fff3cd; }
+    50% { background-color: #ffe69c; }
+    100% { background-color: #fff3cd; }
+}
+
+.card-img-top {
+    transition: transform 0.3s ease;
+}
+
+.card:hover .card-img-top {
+    transform: scale(1.03);
+}

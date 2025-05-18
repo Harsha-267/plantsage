@@ -1,0 +1,158 @@
+{% extends 'plantapp/base.html' %}
+{% block title %}Shop{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-success">🛒 Browse Plants & Tools</h2>
+    <a href="{% url 'home' %}" class="btn btn-outline-success"><i class="bi bi-house-door"></i> Home</a>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-8">
+        <input type="text" id="searchBar" class="form-control" placeholder="Search for plants or tools...">
+    </div>
+    <div class="col-md-4">
+        <select id="filterType" class="form-select">
+            <option value="all">All Products</option>
+            <option value="plant">Plants</option>
+            <option value="tool">Tools</option>
+        </select>
+    </div>
+</div>
+
+<div class="row" id="product-container"></div>
+
+<!-- Back to Top -->
+<button onclick="scrollToTop()" class="btn btn-success position-fixed bottom-0 end-0 m-4 rounded-circle d-none" id="backToTopBtn">
+    <i class="bi bi-arrow-up"></i>
+</button>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const products = [
+            { name: "Snake Plant", image: "snake_plant.jpg", link: "https://example.com/snake-plant", price: "₹699", type: "plant" },
+            { name: "ZZ Plant", image: "zz_plant.jpg", link: "https://example.com/zz-plant", price: "₹849", type: "plant" },
+            { name: "Peace Lily", image: "peace_lily.jpg", link: "https://example.com/peace-lily", price: "₹799", type: "plant" },
+            { name: "Spider Plant", image: "spider_plant.jpg", link: "https://example.com/spider-plant", price: "₹599", type: "plant" },
+            { name: "Rubber Plant", image: "rubber_plant.jpg", link: "https://example.com/rubber-plant", price: "₹899", type: "plant" },
+            { name: "Monstera Deliciosa", image: "monstera_deliciosa.jpg", link: "https://example.com/monstera", price: "₹1099", type: "plant" },
+            { name: "Fiddle Leaf Fig", image: "fiddle_leaf_fig.jpg", link: "https://example.com/fiddle-leaf-fig", price: "₹999", type: "plant" },
+            { name: "Pothos", image: "pothos_golden.jpg", link: "https://example.com/pothos", price: "₹499", type: "plant" },
+            { name: "Aloe Vera", image: "aloe_vera.jpg", link: "https://example.com/aloe", price: "₹349", type: "plant" },
+            { name: "Bird of Paradise", image: "bird_of_paradise.jpg", link: "https://example.com/bird-paradise", price: "₹1499", type: "plant" },
+            { name: "Boston Fern", image: "boston_fern.jpg", link: "https://example.com/boston-fern", price: "₹749", type: "plant" },
+            { name: "Jade Plant", image: "jade_plant.jpg", link: "https://example.com/jade-plant", price: "₹599", type: "plant" }, 
+            { name: "String of Pearls", image: "string_of_pearls.jpg", link: "#", price: "₹699", type: "plant" },
+            { name: "English Ivy", image: "english_ivy.jpg", link: "#", price: "₹499", type: "plant" },
+            { name: "Calathea", image: "calathea.jpg", link: "#", price: "₹599", type: "plant" },
+            { name: "Cast Iron Plant", image: "cast_iron_plant.jpg", link: "#", price: "₹699", type: "plant" },
+            { name: "Calathea Medallion", image: "calathea_medallion.jpg", link: "#", price: "₹749", type: "plant" },
+            { name: "Bird's Nest Fern", image: "birds_nest_fern.jpg", link: "#", price: "₹599", type: "plant" },
+            { name: "Dracaena Marginata", image: "dracaena_marginata.jpg", link: "#", price: "₹899", type: "plant" },
+            { name: "Snake Plant Moonshine", image: "snake_plant_moonshine.jpg", link: "#", price: "₹799", type: "plant" },
+            { name: "African Violet", image: "african_violet.jpg", link: "#", price: "₹449", type: "plant" },
+            { name: "Hoya Plant", image: "hoya_plant.jpg", link: "#", price: "₹599", type: "plant" },
+            { name: "Chinese Evergreen", image: "chinese_evergreen.jpg", link: "#", price: "₹649", type: "plant" },
+            { name: "Alocasia Polly", image: "alocasia_polly.jpg", link: "#", price: "₹749", type: "plant" },
+            { name: "Parlor Palm", image: "parlor_palm.jpg", link: "#", price: "₹599", type: "plant" },
+            { name: "Prayer Plant", image: "prayer_plant.jpg", link: "#", price: "₹499", type: "plant" },
+            { name: "Baby Rubber Plant", image: "baby_rubber_plant.jpg", link: "#", price: "₹459", type: "plant" },
+            { name: "Haworthia", image: "haworthia.jpg", link: "#", price: "₹399", type: "plant" },
+            { name: "Elephant Ear", image: "elephant_ear.jpg", link: "#", price: "₹799", type: "plant" },
+            { name: "Lavender", image: "lavender.jpg", link: "#", price: "₹549", type: "plant" },
+            { name: "Sunflower", image: "sunflower.jpg", link: "#", price: "₹299", type: "plant" },
+            { name: "Hibiscus", image: "hibiscus.jpg", link: "#", price: "₹499", type: "plant" },
+            { name: "Oxalis", image: "oxalis.jpg", link: "#", price: "₹349", type: "plant" },
+            { name: "Hoya", image: "hoya.jpg", link: "#", price: "₹599", type: "plant" },
+            { name: "Yucca", image: "yucca.jpg", link: "#", price: "₹999", type: "plant" },
+            { name: "Croton", image: "croton.jpg", link: "#", price: "₹799", type: "plant" },
+            { name: "Philodendron", image: "philodendron.jpg", link: "#", price: "₹649", type: "plant" },
+            { name: "Dieffenbachia", image: "dieffenbachia.jpg", link: "#", price: "₹599", type: "plant" },
+            { name: "Tradescantia", image: "tradescantia.jpg", link: "#", price: "₹449", type: "plant" },
+            { name: "Sedum", image: "sedum.jpg", link: "#", price: "₹399", type: "plant" },
+            { name: "Ti Plant", image: "ti_plant.jpg", link: "#", price: "₹749", type: "plant" },
+            { name: "Polka Dot Plant", image: "polka_dot_plant.jpg", link: "#", price: "₹429", type: "plant" },
+            { name: "Dracaena", image: "dracaena.jpg", link: "#", price: "₹549", type: "plant" },
+            { name: "Aglaonema", image: "aglaonema.jpg", link: "#", price: "₹699", type: "plant" },
+            { name: "Money Plant", image: "money_plant.jpg", link: "#", price: "₹499", type: "plant" },
+            { name: "Scindapsus", image: "scindapsus.jpg", link: "#", price: "₹579", type: "plant" },
+            { name: "Snapdragon", image: "snapdragon.jpg", link: "#", price: "₹319", type: "plant" },
+            { name: "Coleus", image: "coleus.jpg", link: "#", price: "₹399", type: "plant" },
+            { name: "Alocasia", image: "alocasia.jpg", link: "#", price: "₹749", type: "plant" },
+            { name: "Monstera", image: "monstera.jpg", link: "#", price: "₹899", type: "plant" },
+            { name: "Schefflera", image: "schefflera.jpg", link: "#", price: "₹599", type: "plant" },
+            { name: "Peperomia", image: "peperomia.jpg", link: "#", price: "₹449", type: "plant" },
+            { name: "Chrysanthemum", image: "chrysanthemum.jpg", link: "#", price: "₹379", type: "plant" },
+            { name: "Begonia", image: "begonia.jpg", link: "#", price: "₹499", type: "plant" },
+            { name: "Maranta", image: "maranta.jpg", link: "#", price: "₹429", type: "plant" },
+            { name: "Taro", image: "taro.jpg", link: "#", price: "₹649", type: "plant" },
+            { name: "Impatiens", image: "impatiens.jpg", link: "#", price: "₹349", type: "plant" },
+            { name: "Geranium", image: "geranium.jpg", link: "#", price: "₹479", type: "plant" },
+            { name: "Universal Plant", image: "universal_plant1.jpg", link: "#", price: "₹599", type: "plant" },
+            { name: "Shade Tolerant Lily", image: "shade_tolerant_lily.jpeg", link: "#", price: "₹599", type: "plant" },
+            { name: "Cactus Potting Mix", image: "cactus_mix.jpg", link: "https://example.com/cactus-mix", price: "₹299", type: "tool" },
+            { name: "Watering Can", image: "watering_can.jpg", link: "https://example.com/watering-can", price: "₹499", type: "tool" },
+            { name: "Pruning Shears", image: "pruning_shears.jpg", link: "https://example.com/pruning-shears", price: "₹399", type: "tool" },
+            { name: "Gardening Gloves", image: "gardening_gloves.jpg", link: "https://example.com/gardening-gloves", price: "₹249", type: "tool" },
+            { name: "Plant Stand", image: "plant_stand.jpg", link: "https://example.com/plant-stand", price: "₹599", type: "tool" },
+            { name: "Fertilizer Pack", image: "fertilizer_pack.jpg", link: "https://example.com/fertilizer", price: "₹349", type: "tool" },
+            { name: "Spray Bottle", image: "spray_bottle.jpg", link: "https://example.com/spray-bottle", price: "₹199", type: "tool" }
+        ];
+
+const container = document.getElementById("product-container");
+const searchBar = document.getElementById("searchBar");
+const filterType = document.getElementById("filterType");
+
+function renderProducts(filtered) {
+    container.innerHTML = "";
+    if (!filtered.length) {
+        container.innerHTML = '<div class="text-center text-muted py-4">No products found.</div>';
+        return;
+    }
+
+    filtered.forEach(p => {
+        const col = document.createElement("div");
+        col.className = "col-md-4 mb-4";
+        col.innerHTML = `
+            <div class="card shadow-sm h-100">
+                <img src="/media/plant_images/${p.image}" class="card-img-top" style="height: 250px; object-fit: cover;" alt="${p.name}">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">${p.name}</h5>
+                    <p class="card-text mb-3">Price: ${p.price}</p>
+                    <a href="${p.link}" class="btn btn-success mt-auto" target="_blank">Buy Now</a>
+                </div>
+            </div>
+        `;
+        container.appendChild(col);
+    });
+}
+
+function filterProducts() {
+    const query = searchBar.value.toLowerCase();
+    const type = filterType.value;
+    const result = products.filter(p => 
+        p.name.toLowerCase().includes(query) && 
+        (type === "all" || p.type === type)
+    );
+    renderProducts(result);
+}
+
+searchBar.addEventListener("input", filterProducts);
+filterType.addEventListener("change", filterProducts);
+
+// Scroll Button
+const topBtn = document.getElementById("backToTopBtn");
+window.onscroll = () => {
+    topBtn.classList.toggle("d-none", window.scrollY < 200);
+};
+function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Initial load
+renderProducts(products);
+</script>
+{% endblock %}
+
+    

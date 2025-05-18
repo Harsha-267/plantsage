@@ -1,0 +1,97 @@
+{% extends 'plantapp/base.html' %}
+{% load static crispy_forms_tags %}
+
+{% block title %}Care for {{ user_plant.nickname|default:user_plant.plant.name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Plant Info Column -->
+        <div class="col-md-5 mb-4">
+            <div class="card">
+                {% if user_plant.plant.image %}
+                <img src="{{ user_plant.plant.image.url }}" class="card-img-top" 
+                     alt="{{ user_plant.plant.name }}" style="height: 250px; object-fit: cover;">
+                {% else %}
+                <img src="{% static 'plantapp/images/placeholder.jpg' %}" class="card-img-top" 
+                     alt="Placeholder" style="height: 250px; object-fit: cover;">
+                {% endif %}
+                
+                <div class="card-body">
+                    <h3 class="card-title">
+                        {{ user_plant.nickname|default:user_plant.plant.name }}
+                    </h3>
+                    <p class="text-muted">{{ user_plant.plant.scientific_name }}</p>
+                    
+                    <div class="plant-meta mb-3">
+                        <span class="badge bg-light text-dark me-1">
+                            <i class="bi bi-geo-alt"></i> {{ user_plant.location }}
+                        </span>
+                        <span class="badge bg-light text-dark">
+                            <i class="bi bi-calendar"></i> Added {{ user_plant.date_added|date:"M d, Y" }}
+                        </span>
+                    </div>
+                    
+                    {% if user_plant.notes %}
+                    <div class="card-text mb-3">
+                        <h5>Your Notes:</h5>
+                        <p>{{ user_plant.notes }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Care Tasks Column -->
+        <div class="col-md-7">
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">Care Tasks</h4>
+                    </div>
+                </div>
+                
+                <div class="card-body">
+                    <!-- Task Form -->
+                    <form method="post" class="mb-4">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <button type="submit" class="btn btn-success">Add Task</button>
+                    </form>
+                    
+                    <!-- Task List -->
+                    {% if tasks %}
+                    <div class="list-group">
+                        {% for task in tasks %}
+                        <div class="list-group-item {% if task.due_date == today %}list-group-item-warning{% endif %}">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="mb-1">
+                                        <i class="bi bi-{% if task.task_type == 'water' %}droplet{% elif task.task_type == 'fertilize' %}flower2{% else %}scissors{% endif %}"></i>
+                                        {{ task.get_task_type_display }}
+                                    </h5>
+                                    <small class="text-muted">
+                                        Due: {{ task.due_date|date:"d-m-Y" }}
+                                        {% if task.notes %} • {{ task.notes }}{% endif %}
+                                    </small>
+                                </div>
+                                <div>
+                                    <a href="{% url 'complete_task' task.id %}" class="btn btn-sm btn-success">
+                                        Complete
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        No tasks scheduled yet. Add your first care task above.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends 'plantapp/base.html' %}
+{% load static %}
+
+{% block title %}My Plants{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>My Plant Collection</h1>
+        <a href="{% url 'plant_list' %}" class="btn btn-success">
+            <i class="bi bi-plus"></i> Add New Plant
+        </a>
+    </div>
+
+    {% if plants %}
+    <div class="row">
+        {% for user_plant in plants %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                {% if user_plant.plant.image %}
+                <img src="{{ user_plant.plant.image.url }}" class="card-img-top" alt="{{ user_plant.plant.name }}" style="height: 200px; object-fit: cover;">
+                {% else %}
+                <img src="{% static 'plantapp/images/placeholder.jpg' %}" class="card-img-top" alt="Placeholder" style="height: 200px; object-fit: cover;">
+                {% endif %}
+                
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <h5 class="card-title">
+                            {% if user_plant.nickname %}
+                                {{ user_plant.nickname }}
+                            {% else %}
+                                {{ user_plant.plant.name }}
+                            {% endif %}
+                        </h5>
+                        <span class="badge bg-secondary">{{ user_plant.location }}</span>
+                    </div>
+                    <p class="card-text text-muted">{{ user_plant.plant.scientific_name }}</p>
+                    
+                    <div class="plant-meta mb-3">
+                        <span class="badge bg-light text-dark me-1">
+                            <i class="bi bi-droplet"></i> {{ user_plant.plant.get_watering_frequency_display }}
+                        </span>
+                        <span class="badge bg-light text-dark">
+                            <i class="bi bi-sun"></i> {{ user_plant.plant.sunlight_type|title }}
+                        </span>
+                    </div>
+                    
+                    {% if user_plant.notes %}
+                    <p class="card-text"><small>{{ user_plant.notes }}</small></p>
+                    {% endif %}
+                </div>
+                
+                <div class="card-footer bg-white d-flex justify-content-between">
+                    <a href="{% url 'plant_care' user_plant.id %}" class="btn btn-sm btn-outline-success">
+                        Care Tasks
+                    </a>
+                    <span class="text-muted">
+                        Added {{ user_plant.date_added|date:"M d, Y" }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        You haven't added any plants yet. <a href="{% url 'plant_list' %}" class="alert-link">Browse plants</a> to get started!
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

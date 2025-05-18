@@ -1,4 +1,6 @@
+
 {% extends 'plantapp/base.html' %}
+{% load humanize %}
 {% load static %}
 
 {% block title %}{{ plant.name }}{% endblock %}
@@ -20,9 +22,9 @@
     <div class="col-md-5 mb-4">
         <div class="card">
             {% if plant.image %}
-                <img src="{{ plant.image.url }}" class="card-img-top" alt="{{ plant.name }}">
+                <img src="{{ plant.image.url }}" alt="{{ plant.name }}">
             {% else %}
-                <img src="{% static 'images/placeholder.jpeg' %}" class="card-img-top" alt="{{ plant.name }}">
+                <img src="{% static 'images/placeholder.jpg' %}" alt="No image">
             {% endif %}
 
             <div class="card-body">
@@ -68,7 +70,7 @@
                 <div class="row">
                     <div class="col-md-6">
                         <p><strong>Watering Level:</strong> {{ plant.get_watering_level_display }}</p>
-                        <p><strong>Frequency:</strong> {{ plant.watering_frequency }}</p>
+                        <p><strong>Watering Frequency:</strong> {{ plant.get_watering_frequency_display }}</p>
                     </div>
                     <div class="col-md-6">
                         <div class="watering-tips">

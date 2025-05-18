@@ -78,3 +78,9 @@ class CareTaskForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit('submit', 'Add Task'))
+
+# added now
+class PlantImageUploadForm(forms.ModelForm):
+    class Meta:
+        model = Plant
+        fields = ['name', 'scientific_name', 'image']

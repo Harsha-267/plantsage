@@ -11,6 +11,7 @@
             <h1 class="display-4 fw-bold mb-4">Find Your Perfect Plant Companion</h1>
             <p class="lead mb-4">Discover plants that thrive in your environment with our intelligent plant suggester.</p>
             <a href="{% url 'plant_list' %}" class="btn btn-success btn-lg">Start Exploring</a>
+            
         </div>
         <div class="col-md-6">
             <img src="{% static 'plantapp/images/hero_plant.jpeg' %}" alt="Beautiful plants" class="img-fluid rounded">
@@ -18,17 +19,19 @@
     </div>
 </div>
 
+
 <section class="mb-5">
     <h2 class="text-center mb-4">Featured Plants</h2>
     <div class="row">
         {% for plant in featured_plants %}
         <div class="col-md-4 mb-4">
             <div class="card h-100">
-                {% if plant.image %}
-                    <img src="{{ plant.image.url }}" class="card-img-top" alt="{{ plant.name }}">
+                {% if plant.image and plant.image.url %}
+                    <img src="{{ plant.image.url }}" class="card-img-top" alt="{{ plant.name }}" style="object-fit: contain; height: 300px; width: 100%;">
                 {% else %}
-                    <img src="{% static 'images/placeholder.jpeg' %}" class="card-img-top" alt="{{ plant.name }}">
+                    <img src="{% static 'plantapp/images/placeholder.jpeg' %}" class="card-img-top" alt="{{ plant.name }}">
                 {% endif %}
+
 
                 <div class="card-body">
                     <h5 class="card-title">{{ plant.name }}</h5>
@@ -59,7 +62,7 @@
                 <div class="card-body">
                     <h3 class="card-title">Pet-Friendly Options</h3>
                     <p class="card-text">Discover beautiful plants that are safe for your furry friends.</p>
-                    <a href="{% url 'plant_list' %}?toxic_to_pets=False" class="btn btn-success">View Pet-Safe Plants</a>
+                    <a href="{% url 'plant_list' %}?toxic_to_pets=true" class="btn btn-success">View Pet-Safe Plants</a>
                 </div>
             </div>
         </div>

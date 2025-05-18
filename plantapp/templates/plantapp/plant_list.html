@@ -1,4 +1,6 @@
+
 {% extends 'plantapp/base.html' %}
+{% load humanize %}
 {% load crispy_forms_tags %}
 {% load static %}
 
@@ -29,11 +31,10 @@
     {% for plant in page_obj %}
     <div class="col-md-4 mb-4">
         <div class="card h-100">
-            
             {% if plant.image %}
-                <img src="{{ plant.image.url }}" class="card-img-top" alt="{{ plant.name }}">
+                <img src="{{ plant.image.url }}" alt="{{ plant.name }}">
             {% else %}
-                <img src="{% static 'images/placeholder.jpeg' %}" class="card-img-top" alt="{{ plant.name }}">
+                <img src="{% static 'images/placeholder.jpg' %}" alt="No image">
             {% endif %}
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-start">
@@ -46,7 +47,7 @@
                 <p class="card-text">{{ plant.description|truncatewords:25 }}</p>
                 <div class="plant-meta mb-3">
                     <span class="badge bg-light text-dark me-1"><i class="bi bi-sun"></i> {{ plant.sunlight_type|title }}</span>
-                    <span class="badge bg-light text-dark me-1"><i class="bi bi-droplet"></i> {{ plant.get_watering_level_display }}</span>
+                    <span class="badge bg-light text-dark me-1"><i class="bi bi-droplet"></i> {{ plant.get_watering_frequency_display }}</span>
                     {% if plant.toxic_to_pets %}
                         <span class="badge bg-danger"><i class="bi bi-exclamation-triangle"></i> Toxic to pets</span>
                     {% else %}
@@ -69,8 +70,8 @@
     {% endfor %}
 </div>
 
-{% if page_obj.paginator.num_pages > 1 %}
-<nav aria-label="Page navigation">
+{% if page_obj.has_other_pages %}
+<nav aria-label="Page navigation" class="mt-4">
     <ul class="pagination justify-content-center">
         {% if page_obj.has_previous %}
             <li class="page-item">
@@ -80,15 +81,15 @@
                 <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Previous</a>
             </li>
         {% endif %}
-        
+
         {% for num in page_obj.paginator.page_range %}
-            {% if page_obj.number == num %}
-                <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
-            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            {% if num == page_obj.number %}
+                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+            {% elif num >= page_obj.number|add:'-2' and num <= page_obj.number|add:'2' %}
                 <li class="page-item"><a class="page-link" href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a></li>
             {% endif %}
         {% endfor %}
-        
+
         {% if page_obj.has_next %}
             <li class="page-item">
                 <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Next</a>

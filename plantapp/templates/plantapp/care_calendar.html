@@ -1,0 +1,113 @@
+{% extends 'plantapp/base.html' %}
+{% load static %}
+
+{% block title %}Care Calendar{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Care Calendar</h1>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Upcoming Tasks</h5>
+                        <span class="badge bg-light text-dark">
+                            {{ today|date:"F Y" }}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-body">
+                    {% if tasks %}
+                    <div class="list-group">
+                        {% for task in tasks %}
+                        <div class="list-group-item {% if task.due_date == today %}list-group-item-warning{% endif %}">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">
+                                        <i class="bi bi-{% if task.task_type == 'water' %}droplet{% elif task.task_type == 'fertilize' %}flower2{% else %}scissors{% endif %}"></i>Water ({{ task.user_plant.plant.get_watering_frequency_display }})
+                                        {{ task.get_task_type_display }} 
+                                        <span class="text-muted">for</span> 
+                                        {{ task.user_plant.nickname|default:task.user_plant.plant.name }}
+                                    </h6>
+                                    <small class="text-muted">
+                                        Due: {{ task.due_date|date:"D, M d" }}
+                                        {% if task.notes %} • {{ task.notes }}{% endif %}
+                                    </small>
+                                </div>
+                                <div>
+                                    <a href="{% url 'complete_task' task.id %}" class="btn btn-sm btn-success">
+                                        Mark Complete
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="alert alert-success">
+                        No upcoming care tasks! Enjoy your free time 🌿
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Quick Stats</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6>Plants Needing Water</h6>
+                        <div class="progress">
+                            <div class="progress-bar bg-info" role="progressbar" style="width: {{ water_percent }}%">
+                                {{ water_tasks.count }} plants
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6>Plants Needing Fertilizer</h6>
+                        <div class="progress">
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: {{ fertilize_percent }}%">
+                                {{ fertilize_tasks.count }} plants
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6>Plants Needing Pruning</h6>
+                        <div class="progress">
+                            <div class="progress-bar bg-danger" role="progressbar" style="width: {{ prune_percent }}%">
+                                {{ prune_tasks.count }} plants
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5 class="card-title">Recent Completions</h5>
+                    {% if completed_tasks %}
+                    <ul class="list-group list-group-flush">
+                        {% for task in completed_tasks %}
+                        <li class="list-group-item">
+                            <small class="text-success">{{ task.completed_date|date:"M d" }}</small> • 
+                            {{ task.get_task_type_display }} for {{ task.user_plant.nickname|default:task.user_plant.plant.name }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p class="text-muted">No recently completed tasks</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
