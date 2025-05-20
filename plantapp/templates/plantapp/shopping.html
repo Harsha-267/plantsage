@@ -2,34 +2,41 @@
 {% block title %}Shop{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="text-success">🛒 Browse Plants & Tools</h2>
-    <a href="{% url 'home' %}" class="btn btn-outline-success"><i class="bi bi-house-door"></i> Home</a>
-</div>
-
-<div class="row mb-4">
-    <div class="col-md-8">
-        <input type="text" id="searchBar" class="form-control" placeholder="Search for plants or tools...">
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-success">🛒 Browse Plants & Tools</h2>
+        <a href="{% url 'home' %}" class="btn btn-outline-success"><i class="bi bi-house-door"></i> Home</a>
     </div>
-    <div class="col-md-4">
-        <select id="filterType" class="form-select">
-            <option value="all">All Products</option>
-            <option value="plant">Plants</option>
-            <option value="tool">Tools</option>
-        </select>
+
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-8">
+                    <input type="text" id="searchBar" class="form-control" placeholder="Search for plants or tools...">
+                </div>
+                <div class="col-md-4">
+                    <select id="filterType" class="form-select">
+                        <option value="all">All Products</option>
+                        <option value="plant">Plants</option>
+                        <option value="tool">Tools</option>
+                    </select>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <div class="row" id="product-container"></div>
+
+    <!-- Back to Top -->
+    <button onclick="scrollToTop()" class="btn btn-success position-fixed bottom-0 end-0 m-4 rounded-circle d-none" id="backToTopBtn">
+        <i class="bi bi-arrow-up"></i>
+    </button>
 </div>
-
-<div class="row" id="product-container"></div>
-
-<!-- Back to Top -->
-<button onclick="scrollToTop()" class="btn btn-success position-fixed bottom-0 end-0 m-4 rounded-circle d-none" id="backToTopBtn">
-    <i class="bi bi-arrow-up"></i>
-</button>
 {% endblock %}
 
 {% block scripts %}
 <script>
+
 const products = [
             { name: "Snake Plant", image: "snake_plant.jpg", link: "https://example.com/snake-plant", price: "₹699", type: "plant" },
             { name: "ZZ Plant", image: "zz_plant.jpg", link: "https://example.com/zz-plant", price: "₹849", type: "plant" },
@@ -91,13 +98,13 @@ const products = [
             { name: "Geranium", image: "geranium.jpg", link: "#", price: "₹479", type: "plant" },
             { name: "Universal Plant", image: "universal_plant1.jpg", link: "#", price: "₹599", type: "plant" },
             { name: "Shade Tolerant Lily", image: "shade_tolerant_lily.jpeg", link: "#", price: "₹599", type: "plant" },
-            { name: "Cactus Potting Mix", image: "cactus_mix.jpg", link: "https://example.com/cactus-mix", price: "₹299", type: "tool" },
-            { name: "Watering Can", image: "watering_can.jpg", link: "https://example.com/watering-can", price: "₹499", type: "tool" },
-            { name: "Pruning Shears", image: "pruning_shears.jpg", link: "https://example.com/pruning-shears", price: "₹399", type: "tool" },
-            { name: "Gardening Gloves", image: "gardening_gloves.jpg", link: "https://example.com/gardening-gloves", price: "₹249", type: "tool" },
-            { name: "Plant Stand", image: "plant_stand.jpg", link: "https://example.com/plant-stand", price: "₹599", type: "tool" },
-            { name: "Fertilizer Pack", image: "fertilizer_pack.jpg", link: "https://example.com/fertilizer", price: "₹349", type: "tool" },
-            { name: "Spray Bottle", image: "spray_bottle.jpg", link: "https://example.com/spray-bottle", price: "₹199", type: "tool" }
+            { name: "Cactus Potting Mix", image: "Cactus Potting Mix.png", link: "https://example.com/cactus-mix", price: "₹299", type: "tool" },
+            { name: "Watering Can", image: "watering can.jpg", link: "https://example.com/watering-can", price: "₹499", type: "tool" },
+            { name: "Pruning Shears", image: "pruning shears.jpg", link: "https://example.com/pruning-shears", price: "₹399", type: "tool" },
+            { name: "Gardening Gloves", image: "gardening gloves.jpg", link: "https://example.com/gardening-gloves", price: "₹249", type: "tool" },
+            { name: "Plant Stand", image: "plant stand.jpg", link: "https://example.com/plant-stand", price: "₹599", type: "tool" },
+            { name: "Fertilizer Pack", image: "Fertilizer Pack.jpeg", link: "https://example.com/fertilizer", price: "₹349", type: "tool" },
+            { name: "Spray Bottle", image: "spray bottle.jpg", link: "https://example.com/spray-bottle", price: "₹199", type: "tool" }
         ];
 
 const container = document.getElementById("product-container");
@@ -120,7 +127,7 @@ function renderProducts(filtered) {
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title">${p.name}</h5>
                     <p class="card-text mb-3">Price: ${p.price}</p>
-                    <a href="${p.link}" class="btn btn-success mt-auto" target="_blank">Buy Now</a>
+                    <a href="${p.link}" class="btn btn-success mt-auto" target="_blank" rel="noopener noreferrer">Buy Now</a>
                 </div>
             </div>
         `;
@@ -141,7 +148,6 @@ function filterProducts() {
 searchBar.addEventListener("input", filterProducts);
 filterType.addEventListener("change", filterProducts);
 
-// Scroll Button
 const topBtn = document.getElementById("backToTopBtn");
 window.onscroll = () => {
     topBtn.classList.toggle("d-none", window.scrollY < 200);
@@ -154,5 +160,3 @@ function scrollToTop() {
 renderProducts(products);
 </script>
 {% endblock %}
-
-    
